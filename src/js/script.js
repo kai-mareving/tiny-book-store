@@ -37,8 +37,21 @@
 
       thisBook.id = id;
       thisBook.data = data;
-
       console.log('new Book:', thisBook);
+
+      thisBook.renderInList();
+    }
+
+    renderInList() {
+      const thisBook = this;
+      //* generate the HTML based on template
+      const generatedHTML = templates.book(thisBook.data);
+      //* create a DOMelement using utils.createElementFromHTML
+      thisBook.element = utils.createDOMFromHTML(generatedHTML);
+      //* find the menu container
+      const bookList = document.querySelector(select.containerOf.booksList);
+      //* insert the created DOMelement into menu container
+      bookList.appendChild(thisBook.element);
     }
   }
 
@@ -50,20 +63,15 @@
     initBooks: function () {
       const thisApp = this;
 
-      //? starts with index 1. is that correct?
       (thisApp.data.books).forEach(book => new Book(book.id, book));
-
-      //? this loop works well - or does it? starts with index 0
-      /* for (let book in thisApp.data.books) {
-        new Book(book, thisApp.data.books[book]);
-      } */
+      //or for (let book in thisApp.data.books) { new Book(thisApp.data.books[book].id, thisApp.data.books[book]); }
     },
     init: function () {
       const thisApp = this;
 
       console.log('*** App starting ***');
-      console.log('thisApp in app.init():', thisApp);
-      console.log('templates:', templates);
+      //// console.log('thisApp:', thisApp);
+      //// console.log('templates:', templates);
 
       thisApp.initData();
       thisApp.initBooks();
