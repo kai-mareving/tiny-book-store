@@ -26,6 +26,13 @@
     },
   };
 
+  const classNames = {
+    book: {
+      bookFavorite: 'favorite',
+      bookHidden: 'hidden',
+    },
+  };
+
   const templates = {
     book: Handlebars.compile(document.querySelector(select.templateOf.book).innerHTML),
   };
@@ -40,6 +47,7 @@
       console.log('new Book:', thisBook);
 
       thisBook.render();
+      thisBook.initActions();
     }
 
     render() {
@@ -52,6 +60,29 @@
       const bookList = document.querySelector(select.containerOf.booksList);
       //* insert the created DOMelement into menu container
       bookList.appendChild(thisBook.element);
+    }
+
+    initActions() {
+      const thisBook = this;
+
+      const favoriteBooks = []; //* create favoriteBooks = [];
+      //* find elements on which we will be operating:
+      const bookImgLinks = document.querySelectorAll(select.bookInfo.bookImageLink);
+      const bookImages = document.querySelectorAll(select.bookInfo.bookImage);
+
+      //* with for [loop] add listeners to each a.book__image:
+      bookImgLinks.forEach(link => link.addEventListener('dblclick', addBookToFavorites));
+
+      function addBookToFavorites() {
+        const clickedElement = this;
+
+        //* on 'dbclick' add class favorite to .book__image & add data-id of that image link to favoriteBooks[]
+        clickedElement.classList.toggle(classNames.book.bookFavorite);
+        //todo const imgDataId = clickedElement.getAttribute('data-id');
+        //todo favoriteBooks.push(imgDataId);
+      }
+
+      //* execute initActions after render() */
     }
   }
 

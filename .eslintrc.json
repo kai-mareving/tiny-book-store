@@ -29,6 +29,9 @@
         ],
         "no-debugger":[
             "off"
+        ],
+        "no-unused-vars":[
+            "off"
         ]
     },
     "globals": {
