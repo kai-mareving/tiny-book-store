@@ -65,29 +65,20 @@
     initActions() {
       const thisBook = this;
 
+      const favoriteBooks = []; //* create favoriteBooks = [];
       //* find elements on which we will be operating:
-      const bookImgLinks = document.querySelectorAll(select.bookInfo.bookImageLink);
-      const bookImages = document.querySelectorAll(select.bookInfo.bookImage);
-
+      const bookImgLink = thisBook.element.querySelector(select.bookInfo.bookImageLink);
       //* with for [loop] add listeners to each a.book__image:
-      bookImgLinks.forEach(link => link.addEventListener('dblclick', addBookToFavorites));
+      bookImgLink.addEventListener('dblclick', addBookToFavorites);
 
-      function addBookToFavorites() {
+      function addBookToFavorites(event) {
+        event.preventDefault();
+
         const clickedElement = this;
-
-        const favoriteBooks = []; //* create favoriteBooks = [];
-        const imgDataId = parseInt(clickedElement.getAttribute('data-id'));
-
         //* on 'dbclick' add class favorite to .book__image & add data-id of that image link to favoriteBooks[]
-        if (!(clickedElement.classList.contains(classNames.book.bookFavorite))) {
-          clickedElement.classList.add(classNames.book.bookFavorite);
-          if (!favoriteBooks.includes(imgDataId)) { favoriteBooks.push(imgDataId); }
-        }
-        else {
-          clickedElement.classList.remove(classNames.book.bookFavorite);
-          const index = favoriteBooks.indexOf(imgDataId);
-          if (favoriteBooks[index]) { favoriteBooks.splice(index, 1); }
-        }
+        clickedElement.classList.add('favorite');
+        const imgDataId = parseInt(clickedElement.getAttribute('data-id'));
+        favoriteBooks.push(imgDataId);
         console.log(favoriteBooks);
       }
 
