@@ -44,7 +44,7 @@
 
       thisBook.id = id;
       thisBook.data = data;
-      console.log('new Book:', thisBook);
+      //> console.log('new Book:', thisBook);
 
       thisBook.render();
       thisBook.initActions();
@@ -75,14 +75,23 @@
 
       function addBookToFavorites() {
         const clickedElement = this;
+        const imgDataId = parseInt(clickedElement.getAttribute('data-id'));
 
         //* on 'dbclick' add class favorite to .book__image & add data-id of that image link to favoriteBooks[]
-        clickedElement.classList.toggle(classNames.book.bookFavorite);
-        //todo const imgDataId = clickedElement.getAttribute('data-id');
-        //todo favoriteBooks.push(imgDataId);
+        if (!clickedElement.classList.contains('favorite')) {
+          clickedElement.classList.add(classNames.book.bookFavorite);
+          if (!favoriteBooks.includes(imgDataId)) {
+            favoriteBooks.push(imgDataId);
+          }
+        }
+        else {
+          clickedElement.classList.remove(classNames.book.bookFavorite);
+          const index = favoriteBooks.indexOf(imgDataId);
+          favoriteBooks.splice(index, 1);
+        }
+        console.log(favoriteBooks);
       }
 
-      //* execute initActions after render() */
     }
   }
 
