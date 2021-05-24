@@ -28,14 +28,16 @@
 
   const classNames = {
     book: {
-      bookFavorite: 'favorite',
-      bookHidden: 'hidden',
+      favorite: 'favorite',
+      hidden: 'hidden',
     },
   };
 
   const templates = {
     book: Handlebars.compile(document.querySelector(select.templateOf.book).innerHTML),
   };
+
+  const favoriteBooks = [];
 
   //##### BOOK #####
   class Book{
@@ -65,23 +67,29 @@
     initActions() {
       const thisBook = this;
 
-      const favoriteBooks = []; //* create favoriteBooks = [];
-      //* find elements on which we will be operating:
+      //* find book image link and add listener
       const bookImgLink = thisBook.element.querySelector(select.bookInfo.bookImageLink);
-      //* with for [loop] add listeners to each a.book__image:
       bookImgLink.addEventListener('dblclick', addBookToFavorites);
 
       function addBookToFavorites(event) {
         event.preventDefault();
-
         const clickedElement = this;
-        //* on 'dbclick' add class favorite to .book__image & add data-id of that image link to favoriteBooks[]
-        clickedElement.classList.add('favorite');
-        const imgDataId = parseInt(clickedElement.getAttribute('data-id'));
-        favoriteBooks.push(imgDataId);
-        console.log(favoriteBooks);
-      }
 
+        //* if link doesnt have class favorite add it
+        if (!clickedElement.classList.contains(classNames.book.favorite)) {
+          clickedElement.classList.add(classNames.book.favorite);
+          //*add data-id of that image link to favoriteBooks[]
+          const imgDataId = parseInt(clickedElement.getAttribute('data-id'));
+          favoriteBooks.push(imgDataId);
+        }
+        //* reverse previous action
+        else {
+          clickedElement.classList.remove(classNames.book.favorite);
+          const imgDataId = parseInt(clickedElement.getAttribute('data-id'));
+          const index = favoriteBooks.indexOf(imgDataId);
+          favoriteBooks.splice(index, 1);
+        }
+      }
     }
   }
 
@@ -98,7 +106,6 @@
     },
     init: function () {
       const thisApp = this;
-
       console.log('*** App starting ***');
       //// console.log('thisApp:', thisApp);
       //// console.log('templates:', templates);
