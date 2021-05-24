@@ -39,10 +39,10 @@
       thisBook.data = data;
       console.log('new Book:', thisBook);
 
-      thisBook.renderInList();
+      thisBook.render();
     }
 
-    renderInList() {
+    render() {
       const thisBook = this;
       //* generate the HTML based on template
       const generatedHTML = templates.book(thisBook.data);
