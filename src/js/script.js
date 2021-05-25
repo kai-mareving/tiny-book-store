@@ -20,7 +20,7 @@
       bookLi: 'li.book',
       bookName: 'h2.book__name',
       bookPrice: '.product__base-price',
-      bookImageLink: '.books-list .book__image',
+      bookImageLink: 'a.book__image',
       bookImage: '.book__image > figure > img',
       bookRating: '.book__rating__fill',
     },
@@ -49,7 +49,7 @@
       //> console.log('new Book:', thisBook);
 
       thisBook.render();
-      thisBook.initActions();
+      thisBook.addListeners();
     }
 
     render() {
@@ -64,32 +64,33 @@
       bookList.appendChild(thisBook.element);
     }
 
-    initActions() {
+    addListeners() {
       const thisBook = this;
 
-      //* find book image link and add listener
-      const bookImgLink = thisBook.element.querySelector(select.bookInfo.bookImageLink);
-      bookImgLink.addEventListener('dblclick', addBookToFavorites);
+      const bookList = document.querySelector(select.containerOf.booksList);
+      bookList.addEventListener('dblclick', function (e) {
+        e.preventDefault();
 
-      function addBookToFavorites(event) {
-        event.preventDefault();
-        const clickedElement = this;
+        if (e.target && e.target.offsetParent.matches(select.bookInfo.bookImageLink)){ thisBook.addBookToFavs(e.target.offsetParent); }
+      });
+    }
 
-        //* if link doesnt have class favorite add it
-        if (!clickedElement.classList.contains(classNames.book.favorite)) {
-          clickedElement.classList.add(classNames.book.favorite);
-          //*add data-id of that image link to favoriteBooks[]
-          const imgDataId = parseInt(clickedElement.getAttribute('data-id'));
-          favoriteBooks.push(imgDataId);
-        }
-        //* reverse previous action
-        else {
-          clickedElement.classList.remove(classNames.book.favorite);
-          const imgDataId = parseInt(clickedElement.getAttribute('data-id'));
-          const index = favoriteBooks.indexOf(imgDataId);
-          favoriteBooks.splice(index, 1);
-        }
+    addBookToFavs(target) {
+      const targetElement = target;
+      const targetId = parseInt(targetElement.getAttribute('data-id'));
+
+      //* add class favorite to clicked book
+      if (!targetElement.classList.contains(classNames.book.favorite)) {
+        targetElement.classList.add(classNames.book.favorite);
+        //*add to data-id to favoriteBooks[]
+        favoriteBooks.push(targetId);
       }
+      else {
+        targetElement.classList.remove(classNames.book.favorite);
+        const index = favoriteBooks.indexOf(targetId);
+        favoriteBooks.splice(index, 1);
+      }
+      //// console.log(favoriteBooks);
     }
   }
 
