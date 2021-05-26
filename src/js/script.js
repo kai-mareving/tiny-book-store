@@ -36,6 +36,11 @@ const templates = {
   book: Handlebars.compile(document.querySelector(select.templateOf.book).innerHTML),
 };
 
+const settings = {
+  adults: false,
+  nonFiction: false,
+};
+
 const globals = {
   favBooks: [],
   filters: [],
@@ -98,14 +103,44 @@ const app = {
       }
     });
   },
+  initFormListener: function () {
+    const form = document.querySelector(select.containerOf.form);
+
+    form.addEventListener('click', function (e) {
+      // e.preventDefault();
+      const formConditionSet = (e.target.tagName === 'INPUT') && (e.target.type === 'checkbox') && (e.target.name === 'filter');
+
+      if (formConditionSet) {
+        /* if (e.target.checked === true) {
+          globals.filters.push(e.target.value);
+          console.log(globals.filters);
+        } else {
+          const index = globals.filters.indexOf(e.target.value);
+          globals.filters.splice(index, 1);
+          console.log(globals.filters);
+        } */
+
+        switch (e.target.checked) {
+          case true:
+            if (e.target.value === 'adults') { settings.adults = true; } else { settings.nonFiction = true; }
+            break;
+          case false:
+            if (e.target.value === 'nonFiction') { settings.nonFiction = false; } else { settings.adults = false; }
+            break;
+        }
+      }
+    });
+  },
   init: function () {
     const thisApp = this;
     console.log('*** App starting ***');
     //// console.log('thisApp:', thisApp);
     //// console.log('templates:', templates);
+
     thisApp.initData();
     thisApp.initBooks();
     thisApp.initFavListener();
+    thisApp.initFormListener();
   },
 };
 
