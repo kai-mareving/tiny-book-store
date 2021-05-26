@@ -107,19 +107,11 @@ const app = {
     const form = document.querySelector(select.containerOf.form);
 
     form.addEventListener('click', function (e) {
-      // e.preventDefault();
+      //// e.preventDefault();
       const formConditionSet = (e.target.tagName === 'INPUT') && (e.target.type === 'checkbox') && (e.target.name === 'filter');
 
       if (formConditionSet) {
-        /* if (e.target.checked === true) {
-          globals.filters.push(e.target.value);
-          console.log(globals.filters);
-        } else {
-          const index = globals.filters.indexOf(e.target.value);
-          globals.filters.splice(index, 1);
-          console.log(globals.filters);
-        } */
-
+        //or: if(e.target.checked===true){globals.filters.push(e.target.value);}else{const index=globals.filters.indexOf(e.target.value);globals.filters.splice(index,1);}
         switch (e.target.checked) {
           case true:
             if (e.target.value === 'adults') { settings.adults = true; } else { settings.nonFiction = true; }
