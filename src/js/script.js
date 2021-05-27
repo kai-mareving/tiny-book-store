@@ -44,6 +44,8 @@ const settings = {
 const globals = {
   favBooks: [],
   filters: [],
+  adultBooks: [],
+  nonFictionBooks: [],
 };
 
 
@@ -69,6 +71,7 @@ class Book{
     //* insert the created DOMelement into menu container
     bookList.appendChild(thisBook.element);
   }
+
 }
 
 const app = {
@@ -105,6 +108,8 @@ const app = {
   },
   initFormListener: function () {
     const form = document.querySelector(select.containerOf.form);
+    const bookImgLinkList = document.querySelectorAll(select.bookInfo.bookImageLink);
+    console.log(bookImgLinkList);
 
     form.addEventListener('click', function (e) {
       //// e.preventDefault();
@@ -113,15 +118,50 @@ const app = {
       if (formConditionSet) {
         //or: if(e.target.checked===true){globals.filters.push(e.target.value);}else{const index=globals.filters.indexOf(e.target.value);globals.filters.splice(index,1);}
         switch (e.target.checked) {
-          case true:
-            if (e.target.value === 'adults') { settings.adults = true; } else { settings.nonFiction = true; }
-            break;
-          case false:
-            if (e.target.value === 'nonFiction') { settings.nonFiction = false; } else { settings.adults = false; }
-            break;
+        case true:
+          if (e.target.value === 'adults') {
+            settings.adults = true;
+            // for (let link in bookImgLinkList) {
+              //console.log(link);
+              // const linkDataId = link.getAttribute('data-id');
+              // if (globals.adultBooks.contains(linkDataId)) {
+                // link.classList.remove(classNames.hidden);
+              // }
+            // }
+          } else if(e.target.value === 'nonFiction'){
+            settings.nonFiction = true;
+          }
+          break;
+        case false:
+          if (e.target.value === 'adults') {
+            settings.adults = false;
+            // for (let link of bookImgLinkList) {
+              // const linkDataId = link.getAttribute('data-id');
+              // if (globals.adultBooks.contains(linkDataId)) {
+                // link.classList.add(classNames.hidden);
+              // }
+            // }
+          } else if(e.target.value === 'nonFiction'){
+            settings.nonFiction = false;
+          }
+          break;
         }
       }
     });
+  },
+  filterBooks: function () {
+    const thisApp = this;
+
+    for (const  book in thisApp.data.books) {
+      let bookId = thisApp.data.books[book].id;
+      let bookDetails = thisApp.data.books[book].details;
+      //* const settings.adults and settings.nonFiction might not be needed
+      if(bookDetails.adults === true) {
+        globals.adultBooks.push(bookId);
+      } else if(bookDetails.nonFiction === true) {
+        globals.nonFictionBooks.push(bookId);
+      }
+    }
   },
   init: function () {
     const thisApp = this;
@@ -131,6 +171,7 @@ const app = {
 
     thisApp.initData();
     thisApp.initBooks();
+    thisApp.filterBooks();
     thisApp.initFavListener();
     thisApp.initFormListener();
   },
