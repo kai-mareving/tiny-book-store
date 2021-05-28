@@ -36,16 +36,9 @@ const templates = {
   book: Handlebars.compile(document.querySelector(select.templateOf.book).innerHTML),
 };
 
-const settings = {
-  adults: false,
-  nonFiction: false,
-};
-
 const globals = {
   favBooks: [],
   filters: [],
-  adultBooks: [],
-  nonFictionBooks: [],
 };
 
 
@@ -125,7 +118,6 @@ const app = {
           break;
         }
       }
-      console.log(globals.filters);
       thisApp.filterBooks();
     });
   },
@@ -143,16 +135,16 @@ const app = {
             }
             break;
           case 2:
-            if (book.details[globals.filters[0]] === true && book.details[globals.filters[1]] === true) {
+            if (book.details['adults'] === true && book.details['nonFiction'] === true) {
               shouldBeHidden = false;
-            }
+            } else {shouldBeHidden = true}
         }
       }
 
       if (shouldBeHidden) {
-        document.querySelector('.book__image[data-id="' + book.id + '"]').classList.add(classNames.hidden);
+        document.querySelector('.book__image[data-id="' + book.id + '"]').classList.add(classNames.book.hidden);
       } else {
-        document.querySelector('.book__image[data-id="' + book.id + '"]').classList.remove(classNames.hidden);
+        document.querySelector('.book__image[data-id="' + book.id + '"]').classList.remove(classNames.book.hidden);
       }
     }
   },

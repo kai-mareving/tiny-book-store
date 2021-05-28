@@ -52,8 +52,8 @@ dataSource.books = [
     rating: 6.4,
     price: 40,
     details: {
-      adults: false,
-      nonFiction: false
+      adults: true,
+      nonFiction: true
     }
   },
 ];
