@@ -126,21 +126,13 @@ const app = {
 
     for (let book of thisApp.data.books) {
       let shouldBeHidden = false;
+
       for (let filter of globals.filters) {
-        switch (globals.filters.length) {
-          case 1:
-            if (book.details[filter] === false) {
-              shouldBeHidden = true;
-              break;
-            }
-            break;
-          case 2:
-            if (book.details['adults'] === true && book.details['nonFiction'] === true) {
-              shouldBeHidden = false;
-            } else {shouldBeHidden = true}
+        if (!book.details[filter]){
+          shouldBeHidden = true;
+          break;
         }
       }
-
       if (shouldBeHidden) {
         document.querySelector('.book__image[data-id="' + book.id + '"]').classList.add(classNames.book.hidden);
       } else {
