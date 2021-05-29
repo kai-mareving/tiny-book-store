@@ -55,6 +55,10 @@ class Book{
 
   render() {
     const thisBook = this;
+
+    thisBook.data.ratingBgc = app.determineRatingBgc(thisBook.data.rating);
+    thisBook.data.ratingWidth = thisBook.data.rating * 10;
+
     //* generate the HTML based on template
     const generatedHTML = templates.book(thisBook.data);
     //* create a DOMelement using utils.createElementFromHTML
@@ -77,6 +81,21 @@ const app = {
 
     (thisApp.data.books).forEach(book => new Book(book.id, book));
     //or for (let book in thisApp.data.books) { new Book(thisApp.data.books[book].id, thisApp.data.books[book]); }
+  },
+  determineRatingBgc: function (rating) {
+    const thisApp = this;
+
+    let background = '';
+    if (rating < 6) {
+      background = 'linear-gradient(to bottom,  #fefcea 0%, #f1da36 100%);';
+    } else if (rating > 6 && rating <= 8) {
+      background = 'linear-gradient(to bottom, #b4df5b 0%,#b4df5b 100%);';
+    } else if (rating > 8 && rating <= 9) {
+      background = 'linear-gradient(to bottom, #299a0b 0%, #299a0b 100%);';
+    } else {
+      background = 'linear-gradient(to bottom, #ff0084 0%,#ff0084 100%);';
+    }
+    return background;
   },
   initFavListener: function () {
     const bookList = document.querySelector(select.containerOf.booksList);
