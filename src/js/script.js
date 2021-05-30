@@ -15,10 +15,7 @@ const select = {
     imgLink: 'a.book__image',
     rating: '.book__rating__fill',
   },
-};
-
-const classNames = {
-  book: {
+  classNames: {
     favorite: 'favorite',
     hidden: 'hidden',
   },
@@ -28,53 +25,46 @@ const templates = {
   book: Handlebars.compile(document.querySelector(select.templateOf.book).innerHTML),
 };
 
-const globals = {
-  favourites: [],
-  filters: [],
-};
 
+class BookApp {
+  constructor() {
+    const bookApp = this;
 
-class Book{
-  constructor(id, data) {
-    const thisBook = this;
+    bookApp.data = dataSource;
+    bookApp.favs = [];
+    bookApp.filters = [];
 
-    thisBook.id = id;
-    thisBook.data = data;
-    //> console.log('new Book:', thisBook);
-
-    thisBook.render();
+    bookApp.getElements();
+    bookApp.initBooks();
+    bookApp.filterBooks();
+    bookApp.initFavListener();
+    bookApp.initFormListener();
   }
 
-  render() {
-    const thisBook = this;
+  getElements() {
+    const bookApp = this;
 
-    thisBook.data.ratingBgc = app.determineRatingBgc(thisBook.data.rating);
-    thisBook.data.ratingWidth = thisBook.data.rating * 10;
-
-    //* generate the HTML based on template
-    const generatedHTML = templates.book(thisBook.data);
-    //* create a DOMelement using utils.createElementFromHTML
-    thisBook.element = utils.createDOMFromHTML(generatedHTML);
-    //* find the menu container
-    const bookList = document.querySelector(select.containerOf.bookList);
-    //* insert the created DOMelement into menu container
-    bookList.appendChild(thisBook.element);
+    bookApp.dom = {};
+    bookApp.dom.form = document.querySelector(select.containerOf.form);
+    bookApp.dom.bookList = document.querySelector(select.containerOf.bookList);
   }
 
-}
+  initBooks() {
+    const bookApp = this;
+    console.log(bookApp);
 
-const app = {
-  initData: function () {
-    const thisApp = this;
-    thisApp.data = dataSource;
-  },
-  initBooks: function () {
-    const thisApp = this;
+    for (const book of bookApp.data.books) {
+      book.ratingBgc = bookApp.determineRatingBgc(book.rating);
+      book.ratingWidth = book.rating * 10;
+      const generatedHTML = templates.book(book);
+      //* create a DOMelement using utils.createElementFromHTML
+      const DOMelement = utils.createDOMFromHTML(generatedHTML);
+        //* insert the created DOMelement into menu container
+      bookApp.dom.bookList.appendChild(DOMelement);
+    }
+  }
 
-    (thisApp.data.books).forEach(book => new Book(book.id, book));
-    //or for (let book in thisApp.data.books) { new Book(thisApp.data.books[book].id, thisApp.data.books[book]); }
-  },
-  determineRatingBgc: function (rating) {
+  determineRatingBgc(rating) {
     let background = '';
 
     if (rating < 6) {
@@ -88,81 +78,69 @@ const app = {
     }
 
     return background;
-  },
-  initFavListener: function () {
-    const bookList = document.querySelector(select.containerOf.bookList);
+  }
 
-    bookList.addEventListener('dblclick', function (e) {
-      e.preventDefault();
-      if (e.target && e.target.offsetParent.matches(select.book.imgLink)) {
-        const targetElement = e.target.offsetParent;
+  initFavListener() {
+    const bookApp = this;
+
+    bookApp.dom.bookList.addEventListener('dblclick', function (event) {
+      event.preventDefault();
+      if (event.target && event.target.offsetParent.matches(select.book.imgLink)) {
+        const targetElement = event.target.offsetParent;
         const targetId = parseInt(targetElement.getAttribute('data-id'));
         //* add class favorite to clicked book
-        if (!targetElement.classList.contains(classNames.book.favorite)) {
-          targetElement.classList.add(classNames.book.favorite);
+        if (!targetElement.classList.contains(select.classNames.favorite)) {
+          targetElement.classList.add(select.classNames.favorite);
           //*add to data-id to favourites[]
-          globals.favourites.push(targetId);
+          bookApp.favs.push(targetId);
         } else {
-          targetElement.classList.remove(classNames.book.favorite);
-          const index = globals.favourites.indexOf(targetId);
-          globals.favourites.splice(index, 1);
+          targetElement.classList.remove(select.classNames.favorite);
+          const index = bookApp.favs.indexOf(targetId);
+          bookApp.favs.splice(index, 1);
         }
       }
     });
-  },
-  initFormListener: function () {
-    const thisApp = this;
+  }
 
-    const form = document.querySelector(select.containerOf.form);
+  initFormListener() {
+    const bookApp = this;
 
-    form.addEventListener('click', function (event) {
-
+    bookApp.dom.form.addEventListener('click', function (event) {
       if (event.target.tagName === 'INPUT' && event.target.type === 'checkbox' && event.target.name === 'filter') {
         //or: if(e.target.checked===true){globals.filters.push(e.target.value);}else{const index=globals.filters.indexOf(e.target.value);globals.filters.splice(index,1);}
         switch (event.target.checked) {
         case true:
-          globals.filters.push(event.target.value);
+          bookApp.filters.push(event.target.value);
           break;
         case false:
-          const index = globals.filters.indexOf(event.target.value); // eslint-disable-line no-case-declarations
-          globals.filters.splice(index, 1);
+          const index = bookApp.filters.indexOf(event.target.value); // eslint-disable-line no-case-declarations
+          bookApp.filters.splice(index, 1);
           break;
         }
       }
-      thisApp.filterBooks();
+      bookApp.filterBooks();
     });
-  },
-  filterBooks: function () {
-    const thisApp = this;
+}
 
-    for (let book of thisApp.data.books) {
+  filterBooks() {
+    const bookApp = this;
+
+    for (let book of bookApp.data.books) {
       let shouldBeHidden = false;
 
-      for (let filter of globals.filters) {
+      for (let filter of bookApp.filters) {
         if (!book.details[filter]){
           shouldBeHidden = true;
           break;
         }
       }
       if (shouldBeHidden) {
-        document.querySelector('.book__image[data-id="' + book.id + '"]').classList.add(classNames.book.hidden);
+        document.querySelector('.book__image[data-id="' + book.id + '"]').classList.add(select.classNames.hidden);
       } else {
-        document.querySelector('.book__image[data-id="' + book.id + '"]').classList.remove(classNames.book.hidden);
+        document.querySelector('.book__image[data-id="' + book.id + '"]').classList.remove(select.classNames.hidden);
       }
     }
-  },
-  init: function () {
-    const thisApp = this;
-    console.log('*** App starting ***');
-    //// console.log('thisApp:', thisApp);
-    //// console.log('templates:', templates);
+  }
+}
 
-    thisApp.initData();
-    thisApp.initBooks();
-    thisApp.filterBooks();
-    thisApp.initFavListener();
-    thisApp.initFormListener();
-  },
-};
-
-app.init();
+const app = new BookApp();
